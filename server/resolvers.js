@@ -22,13 +22,17 @@ export const resolvers = {
   },
 
   Mutation: {
-    createJob: async (_root, { input:  { title, description } } ) => {
-      const companyId = 'FjcJCHJALA4i'
-      return createJob({ companyId, title, description });
+    createJob: (_root, { input: { title, description } }, { user }) => {
+      if (!user) {
+        throw unauthorizedError('Missing authentication');
+      }
+      return createJob({ companyId: user.companyId, title, description });
     },
+
     deleteJob: async (_root, { id }) => {
       return await deleteJob(id);
     },
+    
     updateJob: (_root, { input: { id, title, description } }) => {
       return updateJob({ id, title, description });
     },
