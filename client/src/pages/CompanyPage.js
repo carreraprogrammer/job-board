@@ -24,6 +24,7 @@ function CompanyPage() {
       <div className="box">
         {company.description}
       </div>
+      
     </div>
   );
 }

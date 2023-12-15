@@ -1,4 +1,4 @@
-import { getJobs, getJob } from "./db/jobs.js"
+import { getJobs, getJob, getJobsByCompany } from "./db/jobs.js"
 import { getCompany } from "./db/companies.js"
 
 export const resolvers = {
@@ -17,9 +17,7 @@ export const resolvers = {
 
   Company: {
     jobs: async (company) => {
-      const jobs = await getJobs();
-      const companyJobs = jobs.filter((job) => job.companyId === company.id);
-      return companyJobs;
+      return await getJobsByCompany(company.id);
     }
   }
 };
