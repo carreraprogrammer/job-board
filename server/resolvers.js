@@ -1,5 +1,5 @@
-import { get } from "mongoose";
 import { getJobs } from "./db/jobs.js"
+import { getCompany } from "./db/companies.js"
 
 export const resolvers = {
   Query: {
@@ -7,10 +7,13 @@ export const resolvers = {
   },
 
   Job: {
-    date: (job) => toIsoDate(job.date),
+    date: (job) => toIsoDate(job.createdAt),
+    company: (job) => {
+      return getCompany(job.companyId);
+    }
   }
 };
 
 function toIsoDate (date) {
-  return date.toISOString().slice(0, 'yyyy-mm-dd'.length);
+  return date.slice(0, 'yyyy-mm-dd'.length);
 }

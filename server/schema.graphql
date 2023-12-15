@@ -1,10 +1,23 @@
 type Query {
   job: [Job!]
+
 }
+
+type Company {
+  id: ID!
+  name: String!
+  description: String
+}
+
+"""
+ Represents a job posting to our job board
+"""
 
 type Job {
   id: ID!
   title: String!
   description: String
+  """ This __date__ represents the date the job was posted, it is in ISO 8601 format E.G. 2019-01-01T00:00:00.000Z """
   date: String
+  company: Company!
 }
