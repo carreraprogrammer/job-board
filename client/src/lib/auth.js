@@ -1,7 +1,7 @@
 // Disclaimer: This example keeps the access token in LocalStorage just because
 // it's simpler, but in a real application you may want to use cookies instead
 // for better security. Also, it doesn't handle token expiration.
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const API_URL = 'http://localhost:9000';
 
