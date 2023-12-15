@@ -29,6 +29,9 @@ export const resolvers = {
     deleteJob: async (_root, { id }) => {
       return await deleteJob(id);
     },
+    updateJob: (_root, { input: { id, title, description } }) => {
+      return updateJob({ id, title, description });
+    },
 
   },
 
