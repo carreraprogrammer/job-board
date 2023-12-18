@@ -1,20 +1,20 @@
-import { GraphQLError } from "graphql"
-import { getJobs, getJob, getJobsByCompany, createJob, deleteJob, updateJob } from "./db/jobs.js"
-import { getCompany } from "./db/companies.js"
+import { GraphQLError } from 'graphql';
+import { getCompany } from './db/companies.js';
+import { createJob, deleteJob, getJob, getJobs, getJobsByCompany, updateJob } from './db/jobs.js';
 
 export const resolvers = {
   Query: {
     company: async (_root, { id }) => {
       const company = await getCompany(id);
-      if(!company) {
-        throw notFoundError(`Company not found: ${id}`);
+      if (!company) {
+        throw notFoundError('No Company found with id ' + id);
       }
       return company;
     },
     job: async (_root, { id }) => {
       const job = await getJob(id);
-      if(!job) {
-        throw notFoundError(`Job not found: ${id}`);
+      if (!job) {
+        throw notFoundError('No Job found with id ' + id);
       }
       return job;
     },
@@ -39,43 +39,43 @@ export const resolvers = {
       }
       return job;
     },
-    
-    updateJob: async (_root, { input: { id, title, description } },  { user }) => {
-      const companyId = user.companyId;
-      if(!user) {
+
+    updateJob: async (_root, { input: { id, title, description } }, { user }) => {
+      if (!user) {
         throw unauthorizedError('Missing authentication');
       }
-      const updatedJob = await updateJob({ id, companyId, title, description });
-      if(!updatedJob) {
+      const job = await updateJob({ id, companyId: user.companyId, title, description });
+      if (!job) {
         throw notFoundError('No Job found with id ' + id);
       }
-      return updatedJob;
+      return job;
     },
-
-  },
-
-  Job: {
-    date: (job) => toIsoDate(job.createdAt),
-    company: (job) => {
-      return getCompany(job.companyId);
-    }
   },
 
   Company: {
-    jobs: async (company) => {
-      return await getJobsByCompany(company.id);
-    }
-  }
-};
+    jobs: (company) => getJobsByCompany(company.id),
+  },
 
-function toIsoDate (date) {
-  return date.slice(0, 'yyyy-mm-dd'.length);
-}
+  Job: {
+    company: (job, _args, { companyLoader }) => {
+      return companyLoader.load(job.companyId);
+    },
+    date: (job) => toIsoDate(job.createdAt),
+  },
+};
 
 function notFoundError(message) {
   return new GraphQLError(message, {
-    extensions: {
-      code: 'NOT_FOUND'
-    }
+    extensions: { code: 'NOT_FOUND' },
   });
+}
+
+function unauthorizedError(message) {
+  return new GraphQLError(message, {
+    extensions: { code: 'UNAUTHORIZED' },
+  });
+}
+
+function toIsoDate(value) {
+  return value.slice(0, 'yyyy-mm-dd'.length);
 }
